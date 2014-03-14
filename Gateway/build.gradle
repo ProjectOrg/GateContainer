@@ -1,0 +1,110 @@
+/*
+* @author r.kumar.verma
+* @modified by r.kumar.verma
+* @modified date Feb, 14th 2014
+*/
+
+apply plugin: 'war'
+apply plugin: 'java'
+apply plugin: 'eclipse-wtp'
+
+	sourceCompatibility = 1.6
+	version = '1.0'
+	tomcat_home= '/var/lib/tomcat7'
+
+
+	repositories {
+	    mavenCentral()
+	}
+
+	sourceSets {
+		test {
+			java {
+				srcDir 'src/main/test'
+				}
+			}
+		}
+
+		ext {
+			commonVersion = '3.2'
+			junitVersion = '4.+'
+			servletVersion ='2.5'
+			jstlVersion ='1.1.2'
+			servletGroup = 'javax.servlet'
+			}
+
+		dependencies {
+		       	compile group: 'commons-collections', name: 'commons-collections', version: commonVersion
+		 		testCompile group: 'junit', name: 'junit', version: junitVersion
+			    providedCompile "$servletGroup:servlet-api:$servletVersion"
+				runtime 'javax.servlet:jstl:1.1.2'
+				compile fileTree(dir: 'WebContent/WEB-INF/lib', include: '*.jar')
+			}
+
+
+   /**
+   * @author r.kumar.verma
+   * to execute: gradle javadoc
+   * purpose: To create the java documents.
+   **/
+   
+	javadoc {
+		source sourceSets.main.allJava
+		title = 'PropertyResource'
+		options.footer = "Generated on ${new Date().format('dd MMM	yyyy')}"
+		options.header = "Documention for version ${project.version}"
+		}
+
+		
+			
+//Instructing Gradle to fail the build if a version conflicts arises for configurations.
+		configurations.all {
+			resolutionStrategy {
+					failOnVersionConflict()
+					}
+			}
+			
+		
+			test {
+				// run four test processes in parallel and relaunch the test process after 10 tests:
+					forkEvery = 10
+					maxParallelForks = 4
+				// Add System property to running tests.
+					 systemProperties 'property': 'value'
+				// Use the following JVM arguments for each test process.
+					jvmArgs '-Xms256m', '-Xmx512m'
+				// Enable assertions for test with the assert keyword.
+					enableAssertions = true
+				
+				// Show that tests are run in the command-line output
+					testLogging {
+						        events 'started', 'passed'
+				 		 }
+				}
+
+		
+			/**
+			 * @author r.kumar.verma
+			 * Task: deployToTomcat
+			 * To Execute : gradle deployToTomcat
+			 * Copy the war from Lib folder of build and 
+			 * paste the same in Webapps of tomcat
+			 */
+				task deployToTomcat(type: Copy) {
+					from war
+					into "${tomcat_home}/webapps"
+					println "Copy from ${war} into ${tomcat_home}/webapps"
+					logger.lifecycle 'lifecycle: Progress information messages'
+				}
+	
+		   war { 
+				webXml = file('WebContent/WEB-INF/web.xml') 
+				}	
+				
+		
+		  eclipse {
+   			 classpath {
+     				  downloadSources=true
+   					 }
+				}	
+	

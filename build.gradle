@@ -1,0 +1,36 @@
+/**
+* Build script for Gateway
+* @author r.kumar.verma
+* @modified by r.kumar.verma
+* @modified date Feb, 19th 2014
+* @run :gradle eclipse -> for converting project in eclipse format.
+* @run :gradle test    -> to run the test.
+* @run :gradle build   -> for building the application.
+* @run :gradle javadoc -> for generating javadoc.
+* @run :gradle deployToTomcat. -> for deploying war to tomcat.
+* @run :gradle -Dtest.single=<Test Class> test ->  for running a single test class.
+**/
+
+apply plugin: 'ear'
+apply plugin: 'eclipse'
+apply plugin: 'java'
+
+		repositories {
+	   		mavenCentral()
+		}
+
+		dependencies {
+	    	deploy project(path:':Gateway', configuration:'archives')
+		 }
+
+		task createGradleWrapper(type: Wrapper) {
+			gradleVersion = '1.9'
+			scriptFile = 'startGradle'
+			}
+			
+		jar {
+		 	from "$buildDir/libs/GatewayContainer.ear"
+		 	from "Gateway/Version"
+			}	
+
+		

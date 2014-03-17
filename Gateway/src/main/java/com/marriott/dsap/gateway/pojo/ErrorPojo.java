@@ -1,6 +1,7 @@
 package com.marriott.dsap.gateway.pojo;
 /**
 Description for a ErrorPojo.
+Another line of description.
 
  */
 public class ErrorPojo {
